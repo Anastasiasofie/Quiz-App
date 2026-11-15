@@ -1,0 +1,19 @@
+thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtig
+# --- Allgemeinwissen ---;;;;;;
+Allgemeinwissen;Was ist die Hauptstadt von Australien?;Sydney;Canberra;Melbourne;Perth;B
+Allgemeinwissen;Wie viele Kontinente gibt es (nach gängiger Zählung)?;5;6;7;8;C
+Allgemeinwissen;Welcher Planet ist der Sonne am nächsten?;Venus;Mars;Merkur;Erde;C
+Allgemeinwissen;Wer malte die Mona Lisa?;Michelangelo;Leonardo da Vinci;Raffael;Rembrandt;B
+Allgemeinwissen;Welches chemische Symbol hat Gold?;Go;Gd;Au;Ag;C
+Allgemeinwissen;In welchem Jahr fiel die Berliner Mauer?;1987;1989;1991;1993;B
+Allgemeinwissen;Wie heißt der längste Fluss Deutschlands?;Elbe;Donau;Rhein;Main;C
+Allgemeinwissen;Wie viele Spieler hat eine Fußballmannschaft auf dem Feld?;9;10;11;12;C
+# --- Programmieren in C ---;;;;;;
+C-Programmierung;Mit welchem Zeichen endet eine Anweisung in C?;Punkt;Doppelpunkt;Semikolon;Komma;C
+C-Programmierung;Welche Funktion ist der Einstiegspunkt eines C-Programms?;start();main();run();init();B
+C-Programmierung;Welcher Datentyp speichert ganze Zahlen?;float;char*;int;double;C
+C-Programmierung;Welche Funktion reserviert Speicher auf dem Heap?;alloc_new();malloc();new();reserve();B
+C-Programmierung;Welche Header-Datei enthält printf()?;stdlib.h;string.h;stdio.h;math.h;C
+C-Programmierung;Wie viele Bytes belegt sizeof(char) laut C-Standard?;1;2;4;8;A
+C-Programmierung;Welcher Operator liefert die Adresse einer Variablen?;*;&;#;@;B
+C-Programmierung;Welche Funktion gibt mit malloc() reservierten Speicher frei?;delete();free();release();clear();B
