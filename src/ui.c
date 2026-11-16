@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "data.h" //hinzugefügt von Anastasia, bitte alle Daten Sachen in data.h packen
 
 #include <stdio.h>
 #include <stdlib.h>
