@@ -28,4 +28,4 @@ ui.h          <-->  ui.c           Oberfläche: Ein-/Ausgabe, Eingabeprüfung
 ```
 ## CSV Format :
 
-thema;titel;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
+thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort

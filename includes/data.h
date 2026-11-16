@@ -22,19 +22,12 @@ typedef struct {
 typedef struct {
     Frage fragen[MAX_FRAGEN];
 
-    int anzahl_fragen;
-
     char thema[MAX_TEXT];
+
+    int anzahl_fragen;
 
 } Fragensatz;
 
-
-typedef struct {
-    Fragensatz saetze[MAX_FRAGENSATZ];
-
-    int anzahl_saetze;
-
-} Fragensammlung;
 
 typedef struct {
     char thema[MAX_TEXT];
