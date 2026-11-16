@@ -94,3 +94,58 @@ int ui_themen_Wahl(char themen[] [MAX_THEMA], const int *anzahl, int n)
     return wahl - 1;
 }
 
+int ui_frage_stellen(const Frage *f, int nr, int gesamt)
+{
+    char puffer[64];
+    printf("\nFrage %d von %d:\n", nr, gesamt);
+    for (int i = 0; i < f->anzahl_antworten; i++)
+    {
+        printf(" %c) %s\n", 'A' + i, f->antworten[i]);
+    }
+
+    for (;;) {
+        printf("Ihre Antwort (A-D): ");
+        fflush(stdout);
+        if (!ui_lese_zeile(puffer, sizeof(puffer))) {
+            return -1;
+        }
+        if (strlen(puffer) == 1) {
+            char antwort = (char)toupper((unsigned char)puffer[0]);
+            if (antwort >= 'A' && antwort <= 'D') {
+                return antwort - 'A';
+            }
+            if(antwort >= '1' && antwort <= '4') {
+                return antwort - '1';
+            }
+            ui_fehler("Ungültige Eingabe, bitte A, B, C oder D eingeben.");
+        }
+    }
+}
+
+void ui_rueckmeldung(int richtig, const Frage *f)
+{
+    if (richtig) {
+        printf("\nRichtig!\n");
+    } else {
+        printf("\nFalsch! Die richtige Antwort wäre: %c) %s\n", 'A' + f->richtige_antwort, f->antworten[f->richtige_antwort]);
+    }
+}
+
+void ui_ergebnis(int richtig, int gesamt)
+{
+    printf("\n================================\n");
+    printf("            ERGEBNIS\n");
+    printf("================================\n");
+    printf("Sie haben %d von %d Fragen richtig beantwortet.\n", richtig, gesamt);
+}
+
+void ui_verlauf_anzeigen(const Ergebnis *ergebnisse, int anzahl)
+{
+    printf("\n================================\n");
+    printf("            VERLAUF\n");
+    printf("================================\n");
+    for (int i = 0; i < anzahl; i++) {
+        printf("%2d) Thema: %-30s | Richtig: %2d | Gesamt: %2d\n", i + 1, ergebnisse[i].thema, ergebnisse[i].richtig, ergebnisse[i].gesamt);
+    }
+}
+
