@@ -26,3 +26,6 @@ quiz.h        <-->  quiz.c         Spiellogik: Runde, Zufall, Auswertung
 ui.h          <-->  ui.c           Oberfläche: Ein-/Ausgabe, Eingabeprüfung
                     main.c         Ablaufsteuerung (verbindet die Schichten)
 ```
+## CSV Format :
+
+thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort

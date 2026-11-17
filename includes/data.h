@@ -7,6 +7,7 @@
 #define MAX_FRAGEN 100
 #define MAX_THEMA 100
 #define MAX_MELDUNG 256
+#define MAX_FRAGENSATZ 100
 
 typedef struct {
     char frage[MAX_TEXT];
@@ -15,19 +16,18 @@ typedef struct {
 
     int richtige_antwort;
 
-    char thema[MAX_TEXT];
-
 } Frage;
 
 
 typedef struct {
     Frage fragen[MAX_FRAGEN];
 
-    int anzahl_fragen;
-
     char thema[MAX_TEXT];
 
+    int anzahl_fragen;
+
 } Fragensatz;
+
 
 typedef struct {
     char thema[MAX_TEXT];
@@ -35,7 +35,7 @@ typedef struct {
     int richtig;
 
     int gesamt;
-
+    
 } Ergebnis;
 
 #endif
