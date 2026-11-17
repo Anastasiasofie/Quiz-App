@@ -98,3 +98,223 @@ static Frage beispiel_frage(void)
     f.richtige_antwort = 1; // Antwort B ist richtig
     return f;
 }
+
+
+static void test_lese_zeile(void)
+{
+    puts("Test: ui_lese_zeile\n");
+    char buffer[64];
+
+    start("hallo\n");
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 1);
+    stop();
+    CHECK(strcmp(buffer, "hallo") == 0);
+
+    start("abc\r\n");
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 1);
+    stop();
+    CHECK(strcmp(buffer, "abc") == 0);
+
+    start("\n");
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 1);
+    stop();
+    CHECK(strcmp(buffer, "") == 0);
+
+    start("1234567890123456789012345678901234567890123456789012345678901234567890\n");
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 1);
+    CHECK(strcmp(buffer, "1234567890123456789012345678901234567890123456789012345678901234567890") == 0);
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 1);
+    CHECK(strcmp(buffer, "next") == 0);
+    stop();
+
+    start("");
+    CHECK(ui_lese_zeile(buffer, sizeof(buffer)) == 0);
+    stop();
+}
+
+
+static void test_lesen_zahl(void)
+{
+    puts("Test: ui_lesen_zahl\n");
+    int zahl = -1;
+
+    start("5\n");
+    CHECK(ui_lesen_zahl("Zahl: ", 1, 5, &zahl) == 1);
+    stop();
+    CHECK(zahl == 5);
+    CHECK(enthaelt(out_buf, "Zahl: "));
+    CHECK(err_buf[0] == '\0');
+
+    start("1\n");
+    CHECK(ui_lesen_zahl("Zahl: ", 1, 5, &zahl) == 1 && zahl == 1);
+    stop();
+    start("3\n");
+    CHECK(ui_lesen_zahl("Zahl: ", 1, 5, &zahl) == 1 && zahl == 5);
+    stop();
+    start("2\n");
+    CHECK(ui_lesen_zahl("", 1, 5, &zahl) == 1 && zahl == 2);
+    stop();
+}
+
+    // Test Hauptmenü
+
+static void test_hauptmenue(void)
+{
+        puts("Test: ui_hauptmenue\n");
+
+        start("1\n");
+        CHECK(ui_hauptmenue() == 1);
+        stop();
+        CHECK(enthaelt(out_buf, "QUIZ-APP"));
+        CHECK(enthaelt(out_buf, "1. Quiz starten"));
+        CHECK(enthaelt(out_buf, "2. Themen Anzeigen"));
+        CHECK(enthaelt(out_buf, "3. Beenden"));
+
+        start("2\n");
+        CHECK(ui_hauptmenue() == 2);
+        stop();
+        start("3\n");
+        CHECK(ui_hauptmenue() == 3);
+        stop();
+        start("0\n");
+        CHECK(ui_hauptmenue() == 0);
+        stop();
+
+        start("7\nabc\n2\n");
+        CHECK(ui_hauptmenue() == 2);
+        stop();
+        CHECK(anzahl_vorkommen(err_buf, "Ungültige Eingabe") == 2);
+
+        start(""); //TEst beenden
+        CHECK(ui_hauptmenue() == 0);
+        stop();
+}
+
+   static void test_themen(void)
+   {
+          puts("Test: ui_themen_anzeigen / ui_thema_waehlen\n");
+          char themen[3][MAX_THEMA] = {"Mathematik", "Geschichte", "Geographie"};
+          int anzahl[3] = {8, 12, 1};
+
+          start("");
+            ui_themen_anzeigen(themen, anzahl, 3);
+            stop();
+            CHECK(enthaelt(out_buf, "Mathematik"));
+            CHECK(enthaelt(out_buf, "Geschichte"));
+            CHECK(enthaelt(out_buf, "Geographie"));
+            CHECK(enthaelt(out_buf, "(8 Fragen)"));
+            CHECK(enthaelt(out_buf, "(12 Fragen)"));
+            CHECK(enthaelt(out_buf, "(1 Fragen)"));
+            CHECK(enthaelt(out_buf, "1) Mathematik"));
+            CHECK(enthaelt(out_buf, "2) Geschichte"));
+            CHECK(enthaelt(out_buf, "3) Geographie"));
+
+            start("2\n");
+            CHECK(ui_themen_Wahl(themen, anzahl, 3) == 1);
+            stop();
+            CHECK(enthaelt(out_buf, "0) Zurück"));
+
+            start("1\n");
+            CHECK(ui_themen_Wahl(themen, anzahl, 3) == 0);
+            stop();
+            start("3\n");
+            CHECK(ui_themen_Wahl(themen, anzahl, 3) == 2);
+            stop();
+
+
+            start("0\n");
+            CHECK(ui_themen_Wahl(themen, anzahl, 3) == -1);
+            stop();
+
+            start("");      //Eingabebenden
+            CHECK(ui_themen_Wahl(themen, anzahl, 3) == -1);
+            stop();
+   }
+
+static void test_frage_stellen(void)
+{
+    puts("Test: ui_frage_stellen\n");
+    Frage f = beispiel_frage();
+
+    start("b\n");
+    CHECK(ui_frage_stellen(&f, 2, 10) == 1);
+    stop();
+    CHECK(enthaelt(out_buf, "Frage 1 von 1"));
+    CHECK(enthaelt(out_buf, "A) Antwort A"));
+    CHECK(enthaelt(out_buf, "B) Antwort B"));
+    CHECK(enthaelt(out_buf, "C) Antwort C"));
+    CHECK(enthaelt(out_buf, "D) Antwort D"));
+
+    start("A\n");
+    CHECK(ui_frage_stellen(&f, 1, 1) == 0);
+    stop();
+
+    start("c\n");
+    CHECK(ui_frage_stellen(&f, 1, 1) == 2);
+    stop();
+    start("4\n");
+    CHECK(ui_frage_stellen(&f, 1, 1) == 3);
+    stop();
+    start("1\n");
+    CHECK(ui_frage_stellen(&f, 1, 1) == 0);
+    stop();
+
+    start("x\nE\n5\n0\nab\n\nD\n");
+    CHECK(ui_frage_stellen(&f, 1, 1) == 3);
+    stop();
+    CHECK(enthaelt(err_buf, "Ungültige Eingabe") == 6);
+    CHECK(enthaelt(err_buf, "A, B, C oder D"));
+    //Frage wird nicht bei jeder eingabe neu ausgegeben
+    CHECK(ui_frage_stellen(&f, 1, 1) == -1);
+    stop();
+}
+
+static void test_rueckmeldung(void)
+{
+    puts("Test: ui_rueckmeldung\n");
+    Frage f = beispiel_frage();
+
+    start("");
+    ui_rueckmeldung(1, &f);
+    stop();
+    CHECK(enthaelt(out_buf, "Richtig!"));
+    CHECK(!enthaelt(out_buf, "Falsch!"));
+
+    start("");
+    ui_rueckmeldung(0, &f);
+    stop();
+    CHECK(enthaelt(out_buf, "Falsch!"));
+    CHECK(enthaelt(out_buf, "Die richtige Antwort ist: B) Antwort B"));
+    CHECK(!enthaelt(out_buf, "Richtig!"));
+}
+
+
+
+static void test_ergebnis(void)
+{
+    puts("Test: ui_ergebnis_anzeigen\n");
+    Runde r;
+    memset(&r, 0, sizeof(r));
+    r.richtige_antworten = 7;
+    r.anzahl_fragen = 10;
+
+    start("");
+    ui_ergebnis_anzeigen(&r);
+    stop();
+    CHECK(enthaelt(out_buf, "MATHE"));
+    CHECK(enthaelt(out_buf, "Sie haben 7 von 10 Fragen richtig beantwortet."));
+    CHECK(!enthaelt(out_buf, "Falsch!"));
+
+    r.richtige_antworten = 0;
+    start("");
+    ui_ergebnis_anzeigen(&r);
+    stop();
+    CHECK(enthaelt(out_buf, "0 von 10 richtig"));
+    CHECK(enthaelt(out_buf, "(0%)"));
+
+    r.richtige_antworten = 0;
+    start("");
+    ui_ergebnis_anzeigen(&r);
+    stop();
+    CHECK(enthaelt(out_buf, "(100%)"));
+

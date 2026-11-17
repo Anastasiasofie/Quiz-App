@@ -149,4 +149,3 @@ void ui_verlauf_anzeigen(const Ergebnis *ergebnisse, int anzahl)
         printf("%2d) Thema: %-30s | Richtig: %2d | Gesamt: %2d\n", i + 1, ergebnisse[i].thema, ergebnisse[i].richtig, ergebnisse[i].gesamt);
     }
 }
-
