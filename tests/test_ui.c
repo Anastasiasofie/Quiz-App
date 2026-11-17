@@ -318,3 +318,72 @@ static void test_ergebnis(void)
     stop();
     CHECK(enthaelt(out_buf, "(100%)"));
 
+r.anzahl_fragen = 0;
+r.richtige_antworten = 0;
+start("");
+ui_ergebnis_anzeigen(&r);
+stop();
+CHECK(enthaelt(out_buf, "0 von 0 r ichtig"));
+CHECK(enthaelt(out_buf, "(0%)"));
+}
+
+static void test_verlauf(void)
+{
+    puts("Test: ui_verlauf_anzeigen");
+
+    start("");
+    ui_verlauf_anzeigen(NULL, 0);
+    stop();
+    CHECK(enthaelt(out_buf, "noch keine Quizrunden gespielt"));
+
+    Ergebnis liste[2] = {
+        { "1999-01-01 00:23", "Mathe",  1, 3 },
+        { "2099-12-31 23:55", "Biologie", 5, 5 }
+    };
+    start("");
+    ui_verlauf_anzeigen(liste, 2);
+    stop();
+    CHECK(enthaelt(out_buf, "Datum"));
+    CHECK(enthaelt(out_buf, 1999-01-01 00:23));
+    CHECK(enthaelt(out_buf, "Mathe"));
+    CHECK(enthaelt(out_buf, "1/3"));
+    CHECK(enthaelt(out_buf, "33%"));
+    CHECK(enthaelt(out_buf, "2099-12-31 23:55"));
+    CHECK(enthaelt(out, "Biologie"));
+    CHECK(enthaelt(out, "5 / 5"));
+    CHECK(enthaelt(out, "100 %"));
+    CHECK(!enthaelt(out, "noch keine Quizrunden"));
+}
+
+static void test_meldungen(void)
+{
+    puts("Test: ui_fehler / ui_info");
+
+    start("");
+    ui_fehler("Datei fehlt");
+    ui_info("Alles in Ordnung");
+    stop();
+    CHECK(enthaelt(err_buf, "[Fehler] Datei nicht gefunden"));
+    CHECK(!enthaelt(out_buf, "Datei fehlt!"));
+    CHECK(enthaelt(out_buf, "[Info] Alles in Ordnung"));
+    CHECK(!enthaelt(err_buf, "Alles in Ordnung"));
+}
+
+int main (void)
+{
+    test_lese_zeile();
+    test_lesen_zahl();
+    test_hauptmenue();
+    test_themen();
+    test_frage_stellen();
+    test_rueckmeldung();
+    test_ergebnis();
+    test_verlauf();
+    test_meldungen();
+
+    remove (F_IN);
+    remove(F_OUT);
+    remove(F_err);
+    printf("\n%d Prüfungen, %d Fehler\n", geprueft, fehler);
+    return fehler ? EXIT_FAILURE : EXIT_SUCCESS;
+}
