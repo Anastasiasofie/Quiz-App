@@ -1,13 +1,27 @@
+#include <stdio.h>
+#include "data.h"
+
 #ifndef IMPORT_H
 #define IMPORT_H
 
+#define MAX_TEXT 256
+
+
+#ifdef __cplusplus     // Damit kann man die Funktionen auch in C++ verwenden, da C++ die Namensveränderung (Name Mangling) verwendet. Mit extern "C" wird das verhindert.
+extern "C" {
+#endif
 
 FILE *open_csv(const char *dateiname);
 
-int parse_csv_line(void);
+int parse_csv_line(const char *zeile, char felder[][MAX_TEXT], int max_felder);
 
 int validate_question(void);
 
 int import_csv(void);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+
