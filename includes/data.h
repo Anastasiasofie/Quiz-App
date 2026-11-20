@@ -28,6 +28,11 @@ typedef struct {
 
 } Fragensatz;
 
+typedef struct {
+    Fragensatz saetze[MAX_FRAGENSATZ];
+    int anzahl_fragensaetze;
+} Fragensammlung;
+
 
 typedef struct {
     char thema[MAX_TEXT];
@@ -37,5 +42,6 @@ typedef struct {
     int gesamt;
     
 } Ergebnis;
+
 
 #endif

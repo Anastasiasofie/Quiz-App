@@ -29,3 +29,22 @@ ui.h          <-->  ui.c           Oberfläche: Ein-/Ausgabe, Eingabeprüfung
 ## CSV Format :
 
 thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
+
+| Index | CSV-Feld          | Struct-Zuordnung             |
+|-------|-------------------|------------------------------|
+| 0     | thema             | `Fragensatz.thema`           |
+| 1     | frage             | `Frage.frage`                 |
+| 2     | antwort_a         | `Frage.antworten[0]`          |
+| 3     | antwort_b         | `Frage.antworten[1]`          |
+| 4     | antwort_c         | `Frage.antworten[2]`          |
+| 5     | antwort_d         | `Frage.antworten[3]`          |
+| 6     | richtige_antwort  | `Frage.richtige_antwort`      |
+
+## Datenstrukturen 
+Frage = eine einzelne Frage
+
+Fragensatz = mehrere Fragen zu einem Thema
+
+Fragensammlung = mehrere Fragensätze
+ 
+Fragensammlung -> Fragensatz -> Frage

@@ -61,12 +61,40 @@ int parse_csv_line(const char *zeile, char felder[][MAX_TEXT], int max_felder){
 };
 
 
-int validate_question(void){
+int validate_question(char felder[][MAX_TEXT], int anzahl_felder) {
 
-};	
+    // Prüfen, ob genau 7 Felder vorhanden sind
+    if (felder == NULL || anzahl_felder != 7) {
+        return 0;
+    }
+
+    // Prüfen, ob alle Felder ausgefüllt sind
+    for (int i = 0; i < anzahl_felder; i++) {
+
+        if (strlen(felder[i]) == 0) {
+            return 0;
+        }
+    }
+
+    // Prüfen, ob die richtige Antwort eine gültige Zahl ist
+    char *ende;
+    long richtige_antwort = strtol(felder[6], &ende, 10);  //strtol() wandelt Inhalt von felder[6] in eine Zahl um und gibt Pointer auf letztes Zeichen
+
+    if (ende == felder[6] || *ende != '\0') {   //ende muss auf das Ende des Strings zeigen, sonst ist es keine gültige Zahl
+        return 0;
+    }
+
+    // Prüfen, ob die Antwort zwischen 1 und 4 liegt
+    if (richtige_antwort < 1 || richtige_antwort > 4) {
+        return 0;
+    }
+ // Frage ist gültig
+    return 1;
+}
+
 
 int import_csv(void){
-
+return 0;
 };	
 
 
