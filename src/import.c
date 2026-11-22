@@ -92,6 +92,26 @@ int validate_question(char felder[][MAX_TEXT], int anzahl_felder) {
     return 1;
 }
 
+Fragensatz *find_fragensatz(Fragensammlung *sammlung, const char *thema) {
+
+    if (sammlung == NULL || thema == NULL) {
+        return NULL;
+    }
+
+    if (sammlung->anzahl_fragensaetze < 0 ||
+        sammlung->anzahl_fragensaetze > MAX_FRAGENSATZ) {
+        return NULL;
+    }
+
+    for (int i = 0; i < sammlung->anzahl_fragensaetze; i++) {
+
+        if (strcmp(sammlung->saetze[i].thema, thema) == 0) {
+            return &sammlung->saetze[i];
+        }
+    }
+
+    return NULL;
+}
 
 int import_csv(void){
 return 0;

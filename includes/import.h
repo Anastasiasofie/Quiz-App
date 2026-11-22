@@ -15,7 +15,9 @@ FILE *open_csv(const char *dateiname);
 
 int parse_csv_line(const char *zeile, char felder[][MAX_TEXT], int max_felder);
 
-int validate_question(char felder[][MAX_TEXT], int anzahl_felder) ;
+int validate_question(char felder[][MAX_TEXT], int anzahl_felder);
+
+Fragensatz *find_fragensatz(Fragensammlung *sammlung, const char *thema);
 
 int import_csv(void);
 

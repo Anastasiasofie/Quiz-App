@@ -48,3 +48,6 @@ Fragensatz = mehrere Fragen zu einem Thema
 Fragensammlung = mehrere Fragensätze
  
 Fragensammlung -> Fragensatz -> Frage
+
+## Unit tests Aufbau
+( "Testfall", "[Funktionsname]")

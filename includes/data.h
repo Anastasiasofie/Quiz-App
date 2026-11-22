@@ -30,7 +30,9 @@ typedef struct {
 
 typedef struct {
     Fragensatz saetze[MAX_FRAGENSATZ];
+
     int anzahl_fragensaetze;
+    
 } Fragensammlung;
 
 

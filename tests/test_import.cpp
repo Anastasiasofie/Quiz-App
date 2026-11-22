@@ -5,7 +5,7 @@
 
 //Tests für open_csv
 
-TEST_CASE("CSV Datei erfolgreich öffnen") {
+TEST_CASE("CSV Datei erfolgreich öffnen", "[open_csv]") {
 
     FILE *datei = open_csv("tests/test.csv");
 
@@ -17,7 +17,7 @@ TEST_CASE("CSV Datei erfolgreich öffnen") {
 }
 
 
-TEST_CASE("Nicht existierende CSV Datei öffnen") {
+TEST_CASE("Nicht existierende CSV Datei öffnen", "[open_csv]") {
 
     FILE *datei = open_csv("tests/datei_existiert_nicht.csv");
 
@@ -26,7 +26,8 @@ TEST_CASE("Nicht existierende CSV Datei öffnen") {
 
 //tests für parse_csv_line
 
-TEST_CASE("CSV Zeile korrekt aufteilen") {
+
+TEST_CASE("CSV Zeile korrekt aufteilen [parse_csv_line]") {
 
     char felder[4][MAX_TEXT];
 
@@ -45,8 +46,7 @@ TEST_CASE("CSV Zeile korrekt aufteilen") {
 }
 
 
-
-TEST_CASE("CSV Zeile mit nur einem Feld") {
+TEST_CASE("CSV Zeile mit nur einem Feld", "[parse_csv_line]") {
 
     char felder[4][MAX_TEXT];
 
@@ -56,7 +56,7 @@ TEST_CASE("CSV Zeile mit nur einem Feld") {
     CHECK(strcmp(felder[0], "Hallo") == 0);
 }
 
-TEST_CASE("CSV Zeile mit leeren Feldern") {
+TEST_CASE("CSV Zeile mit leeren Feldern", "[parse_csv_line]") {
 
     char felder[4][MAX_TEXT];
 
@@ -71,7 +71,7 @@ TEST_CASE("CSV Zeile mit leeren Feldern") {
 }
 
 
-TEST_CASE("NULL als Zeile") {
+TEST_CASE("NULL als Zeile", "[parse_csv_line]") {
 
     char felder[4][MAX_TEXT];
 
@@ -79,13 +79,13 @@ TEST_CASE("NULL als Zeile") {
 }
 
 
-TEST_CASE("NULL als Feldmatrix") {
+TEST_CASE("NULL als Feldmatrix", "[parse_csv_line]") {
 
     CHECK(parse_csv_line("Max;20", NULL, 4) == -1);
 }
 
 
-TEST_CASE("Maximale Feldanzahl gleich null") {
+TEST_CASE("Maximale Feldanzahl gleich null", "[parse_csv_line]") {
 
     char felder[4][MAX_TEXT];
 
@@ -93,7 +93,7 @@ TEST_CASE("Maximale Feldanzahl gleich null") {
 }
 
 
-TEST_CASE("Mehr Felder als erlaubt") {
+TEST_CASE("Mehr Felder als erlaubt", "[parse_csv_line]") {
 
     char felder[2][MAX_TEXT];
 
@@ -101,7 +101,7 @@ TEST_CASE("Mehr Felder als erlaubt") {
 }
 
 
-TEST_CASE("Text ist zu lang") {
+TEST_CASE("Text ist zu lang", "[parse_csv_line]") {
 
     char zeile[300];
 
@@ -115,7 +115,7 @@ TEST_CASE("Text ist zu lang") {
 
 // Tests für validate_question
 
-TEST_CASE("validate_question - gültige Frage") {
+TEST_CASE("gültige Frage", "[validate_question]") {
 
     char felder[7][MAX_TEXT] = {
         "Mathematik",
@@ -130,7 +130,7 @@ TEST_CASE("validate_question - gültige Frage") {
     CHECK(validate_question(felder, 7) == 1);
 }
 
-TEST_CASE("validate_question - ungültige Eingaben") {
+TEST_CASE("ungültige Eingaben", "[validate_question]") {
 
     SECTION("Anzahl der Felder ist kleiner als 7") {
         char felder[7][MAX_TEXT] = {
@@ -191,4 +191,66 @@ TEST_CASE("validate_question - ungültige Eingaben") {
 
         CHECK(validate_question(felder, 7) == 0);
     }
+}
+
+//tests für find_fragensatz
+
+TEST_CASE("Vorhandenes Thema finden", "[find_fragensatz]") {
+
+    static Fragensammlung sammlung = {};  
+    //wurde mit static deklariert, da sonst stack overflow -> dynamische Speicherallokierung muss noch implementiert werden
+
+    sammlung.anzahl_fragensaetze = 2;
+
+    strcpy(sammlung.saetze[0].thema, "Mathematik");
+    strcpy(sammlung.saetze[1].thema, "Informatik");
+
+    Fragensatz* ergebnis = find_fragensatz(&sammlung, "Informatik");
+
+    REQUIRE(ergebnis != NULL);
+    CHECK(strcmp(ergebnis->thema, "Informatik") == 0);
+}
+
+TEST_CASE("find_fragensatz gibt NULL zurück, wenn Thema nicht existiert", "[find_fragensatz]") {
+
+    static Fragensammlung sammlung = {};
+
+    sammlung.anzahl_fragensaetze = 2;
+
+    strcpy(sammlung.saetze[0].thema, "Mathematik");
+    strcpy(sammlung.saetze[1].thema, "Informatik");
+
+    Fragensatz* ergebnis =
+        find_fragensatz(&sammlung, "Physik");
+
+    REQUIRE(ergebnis == NULL);
+}
+
+TEST_CASE("find_fragensatz gibt NULL bei leerer Sammlung zurück", "[find_fragensatz]") {
+
+    static Fragensammlung sammlung = {};
+
+    sammlung.anzahl_fragensaetze = 0;
+
+    Fragensatz* ergebnis =
+        find_fragensatz(&sammlung, "Mathematik");
+
+    REQUIRE(ergebnis == NULL);
+}
+
+TEST_CASE("find_fragensatz gibt den richtigen Fragensatz zurück", "[find_fragensatz]") {
+
+    static Fragensammlung sammlung = {};
+
+    sammlung.anzahl_fragensaetze = 3;
+
+    strcpy(sammlung.saetze[0].thema, "Mathematik");
+    strcpy(sammlung.saetze[1].thema, "Informatik");
+    strcpy(sammlung.saetze[2].thema, "Biologie");
+
+    Fragensatz* ergebnis =
+        find_fragensatz(&sammlung, "Biologie");
+
+    REQUIRE(ergebnis == &sammlung.saetze[2]);
+    REQUIRE(strcmp(ergebnis->thema, "Biologie") == 0);
 }
