@@ -19,13 +19,21 @@ Themen (Allgemeinwissen, Lehrveranstaltung, ...) genutzt werden kann.
 
 
 ## 2. Architektur
+```
+include/
+    quiz.h          Schnittstelle der Spiellogik
+    ui.h            Schnittstelle der Benutzeroberfläche
+    import.h        Schnittstelle zum Einlesen der Fragen
+    data.h          Schnittstelle zur Datenverwaltung
 
+src/
+    quiz.c          Spiellogik: Quizrunden, zufällige Fragenauswahl und Auswertung
+    ui.c            Benutzeroberfläche: Ein- und Ausgabe sowie Prüfung der Benutzereingaben
+    import.c        Einlesen und Validieren der Fragen aus der CSV-Datei
+    data.c          Datenverwaltung: Speichern und Laden der Quiz-Ergebnisse
+    main.c          Ablaufsteuerung: Startet das Programm und verbindet die einzelnen Module
 ```
-include/            src/
-quiz.h        <-->  quiz.c         Spiellogik: Runde, Zufall, Auswertung
-ui.h          <-->  ui.c           Oberfläche: Ein-/Ausgabe, Eingabeprüfung
-                    main.c         Ablaufsteuerung (verbindet die Schichten)
-```
+
 ## CSV Format :
 
 thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort

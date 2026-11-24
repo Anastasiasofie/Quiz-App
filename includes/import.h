@@ -19,7 +19,7 @@ int validate_question(char felder[][MAX_TEXT], int anzahl_felder);
 
 Fragensatz *find_fragensatz(Fragensammlung *sammlung, const char *thema);
 
-int import_csv(void);
+int import_csv(const char *dateiname, Fragensammlung *sammlung);
 
 #ifdef __cplusplus
 }

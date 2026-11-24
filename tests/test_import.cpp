@@ -3,7 +3,7 @@
 #include "import.h"
 #include <string.h>
 
-//Tests für open_csv
+// Unit Tests für open_csv
 
 TEST_CASE("CSV Datei erfolgreich öffnen", "[open_csv]") {
 
@@ -24,7 +24,7 @@ TEST_CASE("Nicht existierende CSV Datei öffnen", "[open_csv]") {
     CHECK(datei == NULL);
 }
 
-//tests für parse_csv_line
+// Unit Tests für parse_csv_line
 
 
 TEST_CASE("CSV Zeile korrekt aufteilen [parse_csv_line]") {
@@ -113,7 +113,7 @@ TEST_CASE("Text ist zu lang", "[parse_csv_line]") {
 }
 
 
-// Tests für validate_question
+// Unit Tests für validate_question
 
 TEST_CASE("gültige Frage", "[validate_question]") {
 
@@ -193,7 +193,7 @@ TEST_CASE("ungültige Eingaben", "[validate_question]") {
     }
 }
 
-//tests für find_fragensatz
+//Unit tests für find_fragensatz
 
 TEST_CASE("Vorhandenes Thema finden", "[find_fragensatz]") {
 

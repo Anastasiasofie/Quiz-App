@@ -113,8 +113,117 @@ Fragensatz *find_fragensatz(Fragensammlung *sammlung, const char *thema) {
     return NULL;
 }
 
-int import_csv(void){
-return 0;
-};	
+int import_csv(const char *dateiname, Fragensammlung *sammlung) {
+
+if (dateiname == NULL || sammlung == NULL) {
+    return 0;}
+
+FILE *datei = open_csv(dateiname); 
+
+if (datei == NULL) {
+        printf("Fehler: CSV-Datei konnte nicht geöffnet werden.\n");
+        return 0;};
+
+// Maximale Länge einer Zeile:
+// 7 Felder mit jeweils maximal MAX_TEXT - 1 Zeichen,
+// 6 Trennzeichen und ein Zeilenende.
+
+    char zeile[7 * MAX_TEXT + 2];
+
+    char felder[7][MAX_TEXT];
+
+    int zeilennummer = 0;
+
+    while (fgets(zeile, sizeof(zeile), datei) != NULL) {
+
+        zeilennummer++;
+
+        // Prüfen, ob die Zeile vollständig eingelesen wurde
+        if (strchr(zeile, '\n') == NULL && !feof(datei)) {
+            printf("Fehler: Zeile %d ist zu lang.\n", zeilennummer);
+            fclose(datei);
+            return 0;
+        }
+
+        // Erste Zeile ist die Kopfzeile
+        if (zeilennummer == 1) {
+            continue;
+        }
+
+        // CSV-Zeile aufteilen
+        int anzahl_felder = parse_csv_line(zeile,felder,7);
+
+if (!validate_question(felder, anzahl_felder)) {
+    printf("Fehler: Ungültige Frage in Zeile %d.\n", zeilennummer);
+            fclose(datei);
+            return 0;
+        }
+
+// Passenden Fragensatz suchen
+        Fragensatz *satz = find_fragensatz(sammlung,felder[0]);
 
 
+ // Thema existiert noch nicht
+        if (satz == NULL) {
+
+            if (sammlung->anzahl_fragensaetze >= MAX_FRAGENSATZ) {
+                printf("Fehler: Maximale Anzahl an Themen erreicht.\n");
+                fclose(datei);
+                return 0;
+            }
+
+            satz = &sammlung->saetze[sammlung->anzahl_fragensaetze];
+
+            memset(satz, 0, sizeof(Fragensatz));
+
+            strcpy(satz->thema, felder[0]);
+
+            sammlung->anzahl_fragensaetze++;
+        }
+
+        // Prüfen, ob im Fragensatz noch Platz ist
+        if (satz->anzahl_fragen >= MAX_FRAGEN) {
+            printf("Fehler: Zu viele Fragen für das Thema %s.\n",
+                   satz->thema);
+            fclose(datei);
+            return 0;
+        }
+
+        // Neue Frage anlegen
+        Frage *frage = &satz->fragen[satz->anzahl_fragen];
+
+        strcpy(frage->frage, felder[1]);
+
+        for (int i = 0; i < 4; i++) {
+        strcpy(frage->antworten[i], felder[i + 2]);
+        }
+
+        // Richtige Antwort mit strtol() umwandeln
+        char *ende;
+        long wert = strtol(felder[6], &ende, 10);
+
+        // Prüfen, ob die Eingabe eine gültige Zahl ist
+        if (ende == felder[6] || *ende != '\0') {
+            printf("Fehler: Ungültige richtige Antwort in Zeile %d.\n", zeilennummer);
+            fclose(datei);
+            return 0;
+        }
+
+        // Prüfen, ob der Wert im erlaubten Bereich liegt
+        if (wert < 0 || wert > 3) {
+            printf("Fehler: Richtige Antwort muss zwischen 0 und 3 liegen (Zeile %d).\n",zeilennummer);
+            fclose(datei);
+            return 0;
+        }
+
+        frage->richtige_antwort = (int)wert;
+
+        satz->anzahl_fragen++;
+    }
+
+    fclose(datei);
+
+    return 1;
+}
+
+//für import_csv noch Unit tests schreiben
