@@ -1,7 +1,7 @@
 #ifndef QUIZ_H
 #define QUIZ_H
 
-#include "types.h"
+#include "data.h"
 
 typedef struct {
     char thema[MAX_THEMA];
