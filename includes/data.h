@@ -35,7 +35,7 @@ typedef struct {
 
 
 typedef struct {
-    Frage fragen[MAX_FRAGEN];
+    Frage *fragen;
 
     char thema[MAX_TEXT];
 

@@ -11,7 +11,7 @@ typedef struct {
     int richtige_antworten;
 } Runde;
 //Wunsch der Rundenlänge <= 0 oder > verfügbar. Dann alle FRagen
-Status runde_starten(Runde *r, const Fragenkatalog *k, const char *thema, int wunsch);
+Status runde_starten(Runde *r, const Fragensatz *k, const char *thema, int wunsch);
 
 //Nächste Frage oder NULL, wenn RUnde beendet ist
 
