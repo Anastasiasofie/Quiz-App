@@ -48,9 +48,9 @@ int parse_csv_line(const char *zeile, char felder[][MAX_TEXT], int max_felder){
 
         } else {
 
-            if (position >= MAX_TEXT - 1) {
-                return -1;
-            }
+           if (feld >= max_felder || position >= MAX_TEXT - 1) {
+           return -1;
+        }
 
             felder[feld][position] = zeichen;
             position++;
@@ -70,26 +70,36 @@ int validate_question(char felder[][MAX_TEXT], int anzahl_felder) {
 
     // Prüfen, ob alle Felder ausgefüllt sind
     for (int i = 0; i < anzahl_felder; i++) {
-
         if (strlen(felder[i]) == 0) {
             return 0;
         }
     }
 
-    // Prüfen, ob die richtige Antwort eine gültige Zahl ist
-    char *ende;
-    long richtige_antwort = strtol(felder[6], &ende, 10);  //strtol() wandelt Inhalt von felder[6] in eine Zahl um und gibt Pointer auf letztes Zeichen
-
-    if (ende == felder[6] || *ende != '\0') {   //ende muss auf das Ende des Strings zeigen, sonst ist es keine gültige Zahl
-        return 0;
-    }
-
-    // Prüfen, ob die Antwort zwischen 1 und 4 liegt
-    if (richtige_antwort < 1 || richtige_antwort > 4) {
-        return 0;
-    }
- // Frage ist gültig
     return 1;
+}
+
+
+int parse_correct_answer(const char *richtige_Antwort) {     //wichtig damit man als Antwort sowohl 1-4 als auch A-D eingeben kann
+
+    if (richtige_Antwort == NULL || strlen(richtige_Antwort) != 1) {
+        return -1;
+    }
+
+    char zeichen = richtige_Antwort[0];
+
+    if (zeichen >= 'a' && zeichen <= 'd') {
+        zeichen = zeichen - 'a' + 'A';
+    }
+
+    if (zeichen >= 'A' && zeichen <= 'D') {
+        return zeichen - 'A';
+    }
+
+    if (zeichen >= '1' && zeichen <= '4') {
+        return zeichen - '1';
+    }
+
+    return -1;
 }
 
 Fragensatz *find_fragensatz(Fragensammlung *sammlung, const char *thema) {
@@ -121,7 +131,7 @@ if (dateiname == NULL || sammlung == NULL) {
 FILE *datei = open_csv(dateiname); 
 
 if (datei == NULL) {
-        printf("Fehler: CSV-Datei konnte nicht geöffnet werden.\n");
+        fprintf(stderr, "Fehler: CSV-Datei konnte nicht geöffnet werden.\n");
         return 0;};
 
 // Maximale Länge einer Zeile:
@@ -134,30 +144,51 @@ if (datei == NULL) {
 
     int zeilennummer = 0;
 
+    int importierte_fragen = 0;
+
     while (fgets(zeile, sizeof(zeile), datei) != NULL) {
 
-        zeilennummer++;
+    zeilennummer++;
 
-        // Prüfen, ob die Zeile vollständig eingelesen wurde
-        if (strchr(zeile, '\n') == NULL && !feof(datei)) {
-            printf("Fehler: Zeile %d ist zu lang.\n", zeilennummer);
-            fclose(datei);
-            return 0;
-        }
+    // Kopfzeile überspringen
+    if (zeilennummer == 1) {
+        continue;
+    }
 
-        // Erste Zeile ist die Kopfzeile
-        if (zeilennummer == 1) {
-            continue;
-        }
+    // Leerzeilen ignorieren
+    if (zeile[0] == '\n' || zeile[0] == '\r') {
+        continue;
+    }
 
-        // CSV-Zeile aufteilen
-        int anzahl_felder = parse_csv_line(zeile,felder,7);
+    // Kommentarzeilen ignorieren
+    if (zeile[0] == '#') {
+        continue;
+    }
 
-if (!validate_question(felder, anzahl_felder)) {
-    printf("Fehler: Ungültige Frage in Zeile %d.\n", zeilennummer);
-            fclose(datei);
-            return 0;
-        }
+    // Prüfen, ob die Zeile vollständig eingelesen wurde
+    if (strchr(zeile, '\n') == NULL && !feof(datei)) {
+        fprintf(stderr, "Fehler: Zeile %d ist zu lang.\n", zeilennummer);
+        fclose(datei);
+        return 0;
+    }
+
+    // CSV-Zeile aufteilen
+    int anzahl_felder = parse_csv_line(zeile, felder, 7);
+
+    if (!validate_question(felder, anzahl_felder)) {
+        fprintf(stderr, "Fehler: Ungültige Frage in Zeile %d.\n", zeilennummer);
+        fclose(datei);
+        return 0;
+    }
+
+    // Richtige Antwort überprüfen
+    int richtige_antwort = parse_correct_answer(felder[6]);
+
+    if (richtige_antwort == -1) {
+        fprintf(stderr, "Fehler: Ungültige richtige Antwort in Zeile %d.\n", zeilennummer);
+        fclose(datei);
+        return 0;
+    }
 
 // Passenden Fragensatz suchen
         Fragensatz *satz = find_fragensatz(sammlung,felder[0]);
@@ -167,7 +198,7 @@ if (!validate_question(felder, anzahl_felder)) {
         if (satz == NULL) {
 
             if (sammlung->anzahl_fragensaetze >= MAX_FRAGENSATZ) {
-                printf("Fehler: Maximale Anzahl an Themen erreicht.\n");
+                fprintf(stderr, "Fehler: Maximale Anzahl an Themen erreicht.\n");
                 fclose(datei);
                 return 0;
             }
@@ -183,7 +214,7 @@ if (!validate_question(felder, anzahl_felder)) {
 
         // Prüfen, ob im Fragensatz noch Platz ist
         if (satz->anzahl_fragen >= MAX_FRAGEN) {
-            printf("Fehler: Zu viele Fragen für das Thema %s.\n",
+            fprintf(stderr, "Fehler: Zu viele Fragen für das Thema %s.\n",
                    satz->thema);
             fclose(datei);
             return 0;
@@ -198,32 +229,20 @@ if (!validate_question(felder, anzahl_felder)) {
         strcpy(frage->antworten[i], felder[i + 2]);
         }
 
-        // Richtige Antwort mit strtol() umwandeln
-        char *ende;
-        long wert = strtol(felder[6], &ende, 10);
-
-        // Prüfen, ob die Eingabe eine gültige Zahl ist
-        if (ende == felder[6] || *ende != '\0') {
-            printf("Fehler: Ungültige richtige Antwort in Zeile %d.\n", zeilennummer);
-            fclose(datei);
-            return 0;
-        }
-
-        // Prüfen, ob der Wert im erlaubten Bereich liegt
-        if (wert < 0 || wert > 3) {
-            printf("Fehler: Richtige Antwort muss zwischen 0 und 3 liegen (Zeile %d).\n",zeilennummer);
-            fclose(datei);
-            return 0;
-        }
-
-        frage->richtige_antwort = (int)wert;
+        frage->richtige_antwort = richtige_antwort;
 
         satz->anzahl_fragen++;
+        importierte_fragen++;
     }
-
+    if (importierte_fragen == 1) {
+    printf("1 Frage erfolgreich importiert.\n");
+    } 
+    else {
+    printf("%d Fragen erfolgreich importiert.\n", importierte_fragen);
+    }
+    
     fclose(datei);
 
     return 1;
 }
 
-//für import_csv noch Unit tests schreiben
