@@ -1,5 +1,5 @@
 #include "ui.h"
-#include "data.h" //hinzugefügt von Anastasia, bitte alle Daten Sachen in data.h packen
+#include "data.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,46 +60,76 @@ int ui_lesen_zahl(const char *promt, int min, int max, int *wert)
 int ui_hauptmenue(void)
 {
     int wahl;
+
     printf("\n================================\n");
     printf("            QUIZ-APP\n");
     printf("================================\n");
     printf("1. Quiz starten\n");
-    printf("2. Themen Anzeigen\n");
+    printf("2. Themen anzeigen\n");
     printf("3. Beenden\n");
     printf("================================\n");
-    printf("\n");
-    printf("Ihre Auswahl: ");
-    scanf("%d", &wahl);
+
+    if (!ui_lesen_zahl("Ihre Auswahl: ", 1, 3, &wahl)) {
+        return -1;
+    }
+
     return wahl;
 }
 
-void ui_themen_anzeigen(const themen[] [MAX_THEMA], const int *anzahl, int n)
+void ui_themen_anzeigen(const Fragensammlung *sammlung)
 {
+        if (sammlung == NULL) {  // Überprüfen, ob die Fragensammlung NULL ist
+        ui_fehler("Keine Fragensammlung vorhanden.");
+        return;
+    }
+
     printf("\n================================\n");
-    printf("            Verfügabre\n");
+    printf("            Verfügbare\n");
     printf("            THEMEN\n");
     printf("================================\n");
-    for (int i = 0; i < n; i++) {
-        printf("%2d) %-30s (%d Fragen)\n", i + 1, themen[i], anzahl[i]);
+     for (int i = 0; i < sammlung->anzahl_fragensaetze; i++) {
+        printf("%2d) %-30s (%d Fragen)\n",
+            i + 1,
+            sammlung->saetze[i].thema,
+            sammlung->saetze[i].anzahl_fragen
+        );
     }
 }
 
-int ui_themen_Wahl(char themen[] [MAX_THEMA], const int *anzahl, int n)
+int ui_themen_wahl(const Fragensammlung *sammlung)
 {
+
+if (sammlung == NULL) {
+    ui_fehler("Keine Fragensammlung vorhanden.");
+    return -1;
+}
+
     int wahl;
-    ui_themen_anzeigen(themen, anzahl, n);
+    int n = sammlung->anzahl_fragensaetze;
+
+    ui_themen_anzeigen(sammlung);
+
     printf(" 0) Zurück\n");
-    if (!ui_lesen_zahl("Bitte das Thema Wählen: ", 0, n, &wahl) || wahl == 0) {
-         return -1;
+
+    if (!ui_lesen_zahl("Bitte das Thema wählen: ", 0, n, &wahl)
+        || wahl == 0) {
+        return -1;
     }
+
     return wahl - 1;
 }
 
 int ui_frage_stellen(const Frage *f, int nr, int gesamt)
 {
+if (f == NULL) {
+    ui_fehler("Keine Frage vorhanden.");
+    return -1;
+}
+
     char puffer[64];
     printf("\nFrage %d von %d:\n", nr, gesamt);
-    for (int i = 0; i < f->antworten; i++)
+    printf("%s\n", f->frage);
+    for (int i = 0; i < 4; i++)
     {
         printf(" %c) %s\n", 'A' + i, f->antworten[i]);
     }

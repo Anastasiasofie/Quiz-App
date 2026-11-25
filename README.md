@@ -4,7 +4,6 @@ Konsolenanwendung zum Abfragen und Üben von Wissen. Die Fragen werden aus
 CSV-Dateien gelesen, sodass die App ohne Programmänderung für beliebige
 Themen (Allgemeinwissen, Lehrveranstaltung, ...) genutzt werden kann.
 
-
 ## 1. Anforderungen
 
 | Nr | Anforderung | Umsetzung |
@@ -17,8 +16,8 @@ Themen (Allgemeinwissen, Lehrveranstaltung, ...) genutzt werden kann.
 | A6 | Ungültige Eingaben, fehlende/fehlerhafte Dateien behandeln | Eingabeprüfung in `ui.c`, Statuscodes + Meldungen in `fragen.c`/`ergebnisse.c` |
 | A7 | Trennung Datenhaltung / Spiellogik / Oberfläche | siehe Architektur |
 
-
 ## 2. Architektur
+
 ```
 include/
     quiz.h          Schnittstelle der Spiellogik
@@ -34,7 +33,7 @@ src/
     main.c          Ablaufsteuerung: Startet das Programm und verbindet die einzelnen Module
 ```
 
-## CSV Format :
+## 3. CSV Format :
 
 thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
 
@@ -48,8 +47,7 @@ thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
 | 5     | antwort_d         | `Frage.antworten[3]`          |
 | 6     | richtige_antwort  | `Frage.richtige_antwort`      |
 
-
-#### Weitere Regeln für die CSV : 
+#### Weitere Regeln für die CSV :
 
 * Jede Frage muss genau 7 Felder enthalten.
 * Alle Felder müssen ausgefüllt sein.
@@ -59,7 +57,7 @@ thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
 * Die erste Zeile enthält die Spaltenüberschriften und wird beim Import übersprungen.
 * Die Antworten dürfen kein Semikolon enthalten, da dieses als Trennzeichen verwendet wird.
 
-## Datenstrukturen 
+## 4.Datenstrukturen
 Frage = eine einzelne Frage
 
 Fragensatz = mehrere Fragen zu einem Thema
@@ -68,5 +66,6 @@ Fragensammlung = mehrere Fragensätze
  
 Fragensammlung -> Fragensatz -> Frage
 
-## Unit tests Aufbau
+## 5.Unit tests Aufbau
+
 ( "Testfall", "[Funktionsname]")
