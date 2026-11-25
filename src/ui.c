@@ -99,7 +99,7 @@ int ui_frage_stellen(const Frage *f, int nr, int gesamt)
 {
     char puffer[64];
     printf("\nFrage %d von %d:\n", nr, gesamt);
-    for (int i = 0; i < f->anzahl_antworten; i++)
+    for (int i = 0; i < f->antworten; i++)
     {
         printf(" %c) %s\n", 'A' + i, f->antworten[i]);
     }
