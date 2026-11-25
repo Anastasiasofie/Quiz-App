@@ -1,0 +1,13 @@
+# Ausführbare Dateien
+*.exe
+
+# Objektdateien
+*.o
+*.obj
+
+# Debug-Dateien
+*.pdb
+
+# Build-Ordner
+build/
+bin/

@@ -48,6 +48,17 @@ thema;frage;antwort_a;antwort_b;antwort_c;antwort_d;richtige_antwort
 | 5     | antwort_d         | `Frage.antworten[3]`          |
 | 6     | richtige_antwort  | `Frage.richtige_antwort`      |
 
+
+#### Weitere Regeln für die CSV : 
+
+* Jede Frage muss genau 7 Felder enthalten.
+* Alle Felder müssen ausgefüllt sein.
+* Die richtige Antwort wird mit A, B, C, D oder 1, 2, 3, 4 angegeben.
+* Das Thema bestimmt, zu welchem Fragensatz eine Frage gehört.
+* Kommentare können mit # beginnen.
+* Die erste Zeile enthält die Spaltenüberschriften und wird beim Import übersprungen.
+* Die Antworten dürfen kein Semikolon enthalten, da dieses als Trennzeichen verwendet wird.
+
 ## Datenstrukturen 
 Frage = eine einzelne Frage
 
