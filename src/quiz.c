@@ -23,7 +23,7 @@ Status runde_starten(Runde *r, const Fragensatz *k, const char *thema, int wunsc
         return ERR_SPEICHER;
 
     int n=0;
-    for (int i=0 ; i < k->anzahl; i++)
+    for (int i=0 ; i < k->anzahl_fragen; i++)
         if (strcmp(k->thema, thema)==0)
         kandidaten[n++] = &k->fragen[i];
 

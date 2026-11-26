@@ -5,7 +5,7 @@
 
 typedef struct {
     char thema[MAX_THEMA];
-    const Fragen **fragen;
+    const Frage **fragen;
     int anzahl_fragen;
     int aktuelle_frage;
     int richtige_antworten;
