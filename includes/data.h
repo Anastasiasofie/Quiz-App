@@ -25,7 +25,7 @@ typedef enum {
 }Status;
 
 typedef struct {
-    Frage *fragen;;
+    char frage[MAX_TEXT];
 
     char antworten[MAX_ANTWORTEN][MAX_TEXT];
 
@@ -40,9 +40,11 @@ typedef struct {
     char thema[MAX_TEXT];
 
     int anzahl_fragen;
-     int anzahl;
+
     int kapazitaet;
+
     int uebersprungen;
+
     char erste_warnung[MAX_MELDUNG];
 
 } Fragensatz;
@@ -57,6 +59,7 @@ typedef struct {
 
 typedef struct {
     char datum[DATUM_LEN];
+
     char thema[MAX_TEXT];
 
     int richtig;
